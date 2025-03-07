@@ -1,47 +1,50 @@
-# GitHub-Activity-Tracker
+# Git Tracker
 
-🚀 **GitHub Activity Tracker**  
-A simple Python script that fetches and displays recent GitHub activity using the GitHub API.
+## Overview
+Git Tracker is a web application that allows users to track their GitHub activity, including push events, pull requests, issues, forks, and more. The application fetches user activity from the GitHub API and displays it in an interactive UI.
 
-## Features  
-- ✅ Fetches the latest GitHub events for a specified user  
-- ✅ Displays event type and timestamp  
-- ✅ Supports tracking various activities like commits, issues, and pull requests  
+## Features
+- Track GitHub activity by entering a username.
+- Filter events by type (Push, Pull Requests, Issues, etc.).
+- Displays activity in a clean, structured format.
+- Built with Flask (backend) and HTML, CSS, JavaScript (frontend).
 
----
+## Installation
+### Prerequisites
+- Python 3 installed
+- Flask installed (`pip install flask`)
 
-## 🛠 Setup Instructions  
+### Steps
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   cd git-tracker
+   ```
+2. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+3. Run the application:
+   ```sh
+   python app.py
+   ```
+4. Open the browser and visit:
+   ```
+   http://127.0.0.1:5000/
+   ```
 
-### 1️⃣ Clone the Repository  
-```bash
- git clone https://github.com/Tejaswini-Rout/GitHub-Activity-Tracker.git
- cd GitHub-Activity-Tracker
+## Usage
+1. Enter a GitHub username in the input field.
+2. Select an event type from the dropdown.
+3. Click "Track Activity" to fetch and display GitHub activity.
 
-### 2️⃣ Create a Virtual Environment (Optional but Recommended)
- ```bash
- python -m venv venv
- source venv/bin/activate  # Mac/Linux
- venv\Scripts\activate  # Windows
+## Technologies Used
+- **Backend**: Flask, GitHub API
+- **Frontend**: HTML, CSS, JavaScript
 
-##3️⃣ Install Dependencies
- ```bash
- pip install -r requirements.txt
+## Contributing
+Feel free to fork this repository and submit pull requests.
 
-##4️⃣ Run the Script
- ```bash
- python tracker.py
-## 📝 Example Output
- Fetched 10 events for Tejaswini-Rout
- 1. PushEvent at 2025-02-26T10:00:00Z
- 2. IssueCommentEvent at 2025-02-26T09:30:00Z
- ...
-
-## 🔥 Contributing
- Feel free to contribute by submitting issues or pull requests.
-
-📜 License
- This project is licensed under the MIT License - see the LICENSE file for details.
-
-
-
+## License
+This project is open-source and available under the MIT License.
 
