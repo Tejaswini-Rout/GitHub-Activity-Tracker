@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Activity Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 GitHub Activity Tracker</h1>
+        <div class="form-card">
+            <form id="track-form">
+                <label for="username">🔍 Enter GitHub Username:</label>
+                <input type="text" id="username" placeholder="e.g. octocat" required>
+                <button type="submit">Track Activity</button>
+            </form>
+        </div>
+
+        <div id="loading" class="hidden">⏳ Fetching activity...</div>
+
+        <h2>📌 Recent Activity:</h2>
+        <ul id="activity-list"></ul>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

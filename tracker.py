@@ -1,48 +1,76 @@
+from flask import Flask, render_template, request, jsonify
 import requests
-# Ask user for GitHub username
-GITHUB_USERNAME = input("Enter GitHub username: ").strip()
 
-# Predefined event types for selection
-EVENT_TYPES = [
-    "PushEvent", "PullRequestEvent", "IssuesEvent", 
-    "ForkEvent", "WatchEvent", "CreateEvent"
-]
+app = Flask(__name__)
 
-# Display choices
-print("\nSelect an event type to filter:")
-for i, event in enumerate(EVENT_TYPES, start=1):
-    print(f"{i}. {event}")
+GITHUB_API_URL = "https://api.github.com/users/{}/events"
 
-# Get user selection
-try:
-    choice = int(input("\nEnter your choice (1-6): "))
-    if 1 <= choice <= len(EVENT_TYPES):
-        EVENT_TYPE = EVENT_TYPES[choice - 1]
-    else:
-        print("❌ Invalid choice. Defaulting to 'PushEvent'.")
-        EVENT_TYPE = "PushEvent"
-except ValueError:
-    print("❌ Invalid input. Defaulting to 'PushEvent'.")
-    EVENT_TYPE = "PushEvent"
+def fetch_github_activity(username):
+    """Fetch GitHub activity for a given username"""
+    url = GITHUB_API_URL.format(username)  # Fixed URL formatting
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        return response.json()
+    return []  # Return empty list if API fails
 
-# GitHub API URL to fetch user events
-URL = f"https://api.github.com/users/{GITHUB_USERNAME}/events"
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-# Fetch data from GitHub API
-try:
-    response = requests.get(URL, timeout=10)
-    response.raise_for_status()  # Raise an error for bad responses
+@app.route("/track", methods=["POST"])
+def track():
+    username = request.form["username"]
+    events = fetch_github_activity(username)
 
-    events = response.json()
-    filtered_events = [event for event in events if event["type"] == EVENT_TYPE]
+    filtered_events = [
+        {"type": event["type"], "repo": event["repo"]["name"], "created_at": event["created_at"]}
+        for event in events
+    ]
 
-    if filtered_events:
-        print(f"\n✅ Fetched {len(filtered_events)} '{EVENT_TYPE}' events for {GITHUB_USERNAME}")
-        for event in filtered_events[:5]:  # Show only the latest 5 filtered events
-            created_at = event.get("created_at", "Unknown Time")
-            repo_name = event.get("repo", {}).get("name", "Unknown Repo")
-            print(f"➡️ {EVENT_TYPE} in {repo_name} at {created_at}")
-    else:
-        print(f"\n⚠️ No '{EVENT_TYPE}' events found for {GITHUB_USERNAME}.")
-except requests.exceptions.RequestException as e:
-    print(f"❌ Error fetching data: {e}")
+    return jsonify(filtered_events)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+from flask import Flask, render_template, request, jsonify
+import requests
+import logging
+
+app = Flask(__name__)
+
+GITHUB_API_URL = "https://api.github.com/users/{}/events"
+
+def fetch_github_activity(username):
+    """Fetch GitHub activity for a given username"""
+    try:
+        url = GITHUB_API_URL.format(username)
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to fetch GitHub activity: {e}")
+        return []
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/track", methods=["POST"])
+def track():
+    try:
+        username = request.form["username"]
+        if not username:
+            return jsonify({"error": "Username is required"}), 400
+        events = fetch_github_activity(username)
+        filtered_events = [
+            {"type": event["type"], "repo": event["repo"]["name"], "created_at": event["created_at"]}
+            for event in events
+        ]
+        return jsonify(filtered_events)
+    except Exception as e:
+        logging.error(f"Failed to track GitHub activity: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    app.run(debug=True)
